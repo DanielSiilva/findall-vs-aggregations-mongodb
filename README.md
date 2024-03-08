@@ -13,4 +13,4 @@ Este projeto realiza uma análise comparativa entre as operações de agregaçã
 
 1. **Clone o Repositório**
    ```bash
-   git clone [URL_DO_REPOSITORIO]
+   git clone git@github.com:DanielSiilva/findall-vs-aggregations-mongodb.git
