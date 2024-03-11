@@ -1,1 +1,13 @@
-console.log("agrregate");
+const mongoose = require("mongoose");
+const Hero = require("../hero");
+
+module.exports.runAggregation = async function (heroSchema) {
+  try {
+    const aggregationResult = await Hero.aggregate([
+      { $group: { _id: "$power", total: { $sum: 1 } } },
+    ]);
+    console.log("Result of aggregation", aggregationResult);
+  } catch (error) {
+    console.error("Erro on aggregation", error);
+  }
+};
