@@ -1,17 +1,44 @@
-const mongoose = require("mongoose");
-const express = require("express");
 require("dotenv").config();
 
-const app = express();
+const mongoose = require("mongoose");
+const { runAggregation } = require("./src/script/aggregate");
+const { seedHeroes } = require("./src/script/seed");
+const { runFindAll } = require("./src/script/findall");
+
+const connectionString = process.env.MONGOBD_URL;
+
+async function connectToDatabaseAndAggregate() {
+  try {
+    console.log("Successfully connected to MongoDB!");
+
+    const Hero = mongoose.model("Hero");
+    await seedHeroes();
+
+    // Aqui se inicia o timer para a operação aggregate
+    console.time("aggregate");
+    await runAggregation(Hero);
+    // Parar o timer para a operação aggregate
+    console.timeEnd("aggregate");
+
+    // Aqui se inicia timer para a operação find
+    console.time("find");
+    await runFindAll(Hero);
+    // Parar o timer para a operação find
+    console.timeEnd("find");
+  } catch (error) {
+    console.error("Erro na conexão:", error);
+  } finally {
+    // Fechar a conexão com o MongoDB
+    await mongoose.connection.close();
+  }
+}
 
 mongoose
-  .connect(process.env.MONGOBD_URL)
-  .then(() => {
-    console.log("Connnecet to mongobd");
-    app.listen(3002, () => {
-      console.log("Server is runnig on port 3002");
-    });
+  .connect(connectionString, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
   })
+  .then(connectToDatabaseAndAggregate)
   .catch((error) => {
-    console.log("Connection failed", error);
+    console.error("Erro na conexão:", error);
   });

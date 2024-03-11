@@ -6,8 +6,9 @@ module.exports.runAggregation = async function (heroSchema) {
     const aggregationResult = await Hero.aggregate([
       { $group: { _id: "$power", total: { $sum: 1 } } },
     ]);
-    console.log("Result of aggregation", aggregationResult);
+
+    console.log("Result of aggregation:", aggregationResult);
   } catch (error) {
-    console.error("Erro on aggregation", error);
+    console.error("Error on aggregation:", error);
   }
 };
